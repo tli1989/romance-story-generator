@@ -26,7 +26,7 @@ Please write a complete story with a satisfying resolution. Focus on emotional d
       method: 'POST',
       headers: {
         'x-api-key': process.env.CLAUDE_API_KEY,
-        'anthropic-version': '2024-02-15',
+        'anthropic-version': '2023-06-01',
         'content-type': 'application/json'
       },
       body: JSON.stringify(requestPayload)

@@ -6,46 +6,51 @@ export default async function handler(req, res) {
   try {
     const { MMC, FMC, startAs, mainTrope } = req.body;
 
-    const requestBody = {
-      model: 'claude-3-opus-20240229',
-      max_tokens: 4096,
-      // System parameter is at the top level, not in messages array
-      system: "You are a creative romance writer who specializes in writing engaging, emotional stories with vivid descriptions and natural dialogue. Focus on emotional development, chemistry, natural dialogue, and satisfying resolutions. Keep content family-friendly.",
-      messages: [
-        {
-          role: "user",
-          content: `Write a 1,000 word modern romance story. It's an AU (Alternate Universe) fiction about ${MMC}. He falls in love with ${FMC}. 
+    const requestPayload = {
+      model: "claude-3-opus-20240229",
+      messages: [{
+        role: "user",
+        content: `Write a 1,000 word modern romance story. It's an AU (Alternate Universe) fiction about ${MMC}. He falls in love with ${FMC}. 
 
 This is a ${mainTrope} story, where ${MMC} and the FMC start as ${startAs} but then overcome their internal and external obstacles to fall in love.
 
-Please write a complete story with a satisfying resolution.`
-        }
-      ]
+Please write a complete story with a satisfying resolution. Focus on emotional development, chemistry, natural dialogue, and create a satisfying resolution. Keep content family-friendly.`
+      }],
+      temperature: 1,
+      max_tokens: 4096
     };
 
-    console.log('Making request with body:', JSON.stringify(requestBody, null, 2));
+    console.log('Request payload:', JSON.stringify(requestPayload, null, 2));
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'x-api-key': process.env.CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2024-02-15',
+        'content-type': 'application/json'
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify(requestPayload)
     });
+
+    console.log('Response status:', response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Claude API error response:', errorText);
-      throw new Error(`Claude API error: ${response.statusText} - ${errorText}`);
+      console.error('Claude API error:', errorText);
+      throw new Error(`Claude API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('Response data:', JSON.stringify(data, null, 2));
+
+    if (!data.content || !data.content[0] || !data.content[0].text) {
+      throw new Error('Invalid response structure from Claude API');
+    }
+
     return res.status(200).json({ story: data.content[0].text });
-    
+
   } catch (error) {
-    console.error('Full error:', error);
+    console.error('Error:', error);
     return res.status(500).json({ 
       error: 'Failed to generate story',
       details: error.message 

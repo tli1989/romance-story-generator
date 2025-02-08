@@ -28,6 +28,8 @@ Please write a complete story with a satisfying resolution.`
       }
     ];
 
+    console.log('Making request to Claude API...');
+    
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -42,14 +44,28 @@ Please write a complete story with a satisfying resolution.`
       })
     });
 
+    console.log('Response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`Claude API error: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Claude API error response:', errorText);
+      throw new Error(`Claude API error: ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('Successfully got response from Claude');
+    
+    if (!data.content || !data.content[0]) {
+      console.error('Unexpected response structure:', data);
+      throw new Error('Invalid response structure from Claude API');
+    }
+
     return res.status(200).json({ story: data.content[0].text });
   } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({ error: 'Failed to generate story' });
+    console.error('Detailed error:', error);
+    return res.status(500).json({ 
+      error: 'Failed to generate story',
+      details: error.message 
+    });
   }
 }

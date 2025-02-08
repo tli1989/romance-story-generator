@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       model: "claude-3-opus-20240229",
       messages: [{
         role: "user",
-        content: `Write a 1,000 word modern romance story. It's an AU (Alternate Universe) fiction about ${MMC}. He falls in love with ${FMC}. 
+        content: `Write a 500 word modern romance story. It's an AU (Alternate Universe) fiction about ${MMC}. He falls in love with ${FMC}. 
 
 This is a ${mainTrope} story, where ${MMC} and the FMC start as ${startAs} but then overcome their internal and external obstacles to fall in love.
 

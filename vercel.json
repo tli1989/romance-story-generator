@@ -4,10 +4,7 @@
   "devCommand": "next dev",
   "framework": "nextjs",
   "functions": {
-    "pages/api/generate-story.js": {
-      "maxDuration": 60
-    },
-    "pages/api/start-generation.js": {
+    "pages/api/*": {
       "maxDuration": 60
     }
   }

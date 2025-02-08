@@ -10,14 +10,17 @@ export default function Home() {
   const [story, setStory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [progress, setProgress] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setProgress('Starting story generation...');
 
     try {
-      const response = await fetch('/api/generate', {
+      // Start the generation process
+      const startResponse = await fetch('/api/start-generation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,17 +28,36 @@ export default function Home() {
         body: JSON.stringify(formData)
       });
 
-      if (!response.ok) {
+      if (!startResponse.ok) {
+        throw new Error('Failed to start story generation');
+      }
+
+      const { requestId } = await startResponse.json();
+      setProgress('Generating your story...');
+
+      // Generate the story
+      const generateResponse = await fetch('/api/generate-story', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          requestId
+        })
+      });
+
+      if (!generateResponse.ok) {
         throw new Error('Failed to generate story');
       }
 
-      const data = await response.json();
+      const data = await generateResponse.json();
       setStory(data.story);
-// In the try-catch block of handleSubmit:
+      setProgress('');
+
     } catch (err) {
-      const errorDetails = await err.response?.json();
-      setError(errorDetails?.details || err.message || 'Failed to generate story');
-      console.error('Error details:', errorDetails);
+      setError(err.message);
+      console.error('Error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -121,6 +143,12 @@ export default function Home() {
                     {isLoading ? 'Generating Story...' : 'Generate Story'}
                   </button>
                 </form>
+
+                {progress && (
+                  <div className="mt-4 text-center text-indigo-600">
+                    {progress}
+                  </div>
+                )}
 
                 {error && (
                   <div className="mt-4 text-red-600 text-center">

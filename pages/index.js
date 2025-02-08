@@ -31,9 +31,11 @@ export default function Home() {
 
       const data = await response.json();
       setStory(data.story);
+    // In the handleSubmit function, update the catch block:
     } catch (err) {
-      setError('Failed to generate story. Please try again.');
-      console.error('Error:', err);
+      const errorMessage = err.response?.data?.details || err.message || 'Failed to generate story';
+      setError(`Error: ${errorMessage}`);
+      console.error('Full error:', err);
     } finally {
       setIsLoading(false);
     }

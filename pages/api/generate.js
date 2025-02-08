@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
-  // Increase the response timeout
-  res.setTimeout(30000);
+  // Set response timeout
+  res.setTimeout(55000);
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -13,18 +13,15 @@ export default async function handler(req, res) {
       model: "claude-3-opus-20240229",
       messages: [{
         role: "user",
-        content: `Write a brief modern romance story (around 500 words) about ${MMC} falling in love with ${FMC}. 
-
-This is a ${mainTrope} story, where they start as ${startAs} but then overcome their obstacles to fall in love.
-
-Keep it concise but emotionally resonant, with natural dialogue and a satisfying resolution.`
+        content: `Write a romantic story (around 500 words) about ${MMC} falling in love with ${FMC}. 
+        
+This is a ${mainTrope} story, where they start as ${startAs}. Keep the story concise but emotionally resonant.`
       }],
       temperature: 1,
-      max_tokens: 2048 // Reduced from 4096
+      max_tokens: 2048
     };
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // Set 8-second timeout
+    console.log('Starting Claude API request...');
 
     try {
       const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -34,11 +31,10 @@ Keep it concise but emotionally resonant, with natural dialogue and a satisfying
           'anthropic-version': '2023-06-01',
           'content-type': 'application/json'
         },
-        body: JSON.stringify(requestPayload),
-        signal: controller.signal
+        body: JSON.stringify(requestPayload)
       });
 
-      clearTimeout(timeoutId);
+      console.log('Received response from Claude API:', response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -47,12 +43,11 @@ Keep it concise but emotionally resonant, with natural dialogue and a satisfying
       }
 
       const data = await response.json();
+      console.log('Successfully parsed response');
       return res.status(200).json({ story: data.content[0].text });
 
     } catch (fetchError) {
-      if (fetchError.name === 'AbortError') {
-        throw new Error('Request timed out');
-      }
+      console.error('Fetch error:', fetchError);
       throw fetchError;
     }
 

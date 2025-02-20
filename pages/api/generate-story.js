@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         role: "user",
         content: `Write the first 350 words of a modern day AU romance fic about ${MMC} falling in love with ${FMC}. 
 
-This is a ${mainTrope} story, where they start as ${startAs}. Before you start, think of a reason ${MMC} and ${FMC} are stuck spending time together. Then think of a reason why ${MMC} and ${FMC} are not ready for a happily ever after. Make sure the first 350 words highlight this tension.`
+This is a ${mainTrope} story, where they start as ${startAs}. Before you start, think of a reason ${MMC} and ${FMC} are stuck spending time together. Then think of a reason why ${MMC} and ${FMC} are not ready for a happily ever after. Make sure the first 350 words highlight this tension. Also make sure to preserve the unique appearance, appeal and personality of ${MMC} from his original fiction.`
       }],
       temperature: 1,
       max_tokens: 4096

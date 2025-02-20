@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     const { MMC, FMC, startAs, mainTrope } = req.body;
 
     const requestPayload = {
-      model: "claude-3-sonnet-20240229",
+      model: "claude-3-sonnet-20240229-v1h",
       messages: [{
         role: "user",
         content: `Write the first 350 words of a modern day AU romance fic about ${MMC} falling in love with ${FMC}. 

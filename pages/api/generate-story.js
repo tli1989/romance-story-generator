@@ -12,9 +12,9 @@ export default async function handler(req, res) {
       model: "claude-3-opus-20240229",
       messages: [{
         role: "user",
-        content: `Write a romantic story (around 1000 words) about ${MMC} falling in love with ${FMC}. 
+        content: `Write the first 350 words of a modern day AU romance fic about ${MMC} falling in love with ${FMC}. 
 
-This is a ${mainTrope} story, where they start as ${startAs}. Keep the story emotionally resonant with natural dialogue and a satisfying ending.`
+This is a ${mainTrope} story, where they start as ${startAs}. Before you start, think of a reason ${MMC} and ${FMC} are stuck spending time together. Then think of a reason why ${MMC} and ${FMC} are not ready for a happily ever after. Make sure the first 350 words highlight this tension.`
       }],
       temperature: 1,
       max_tokens: 4096
